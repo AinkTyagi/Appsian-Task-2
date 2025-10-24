@@ -1,0 +1,113 @@
+name: Deploy Application
+
+on:
+  push:
+    branches: [ main, production ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  test-backend:
+    name: Test Backend (.NET)
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      
+      - name: Restore dependencies
+        working-directory: ./server
+        run: dotnet restore
+      
+      - name: Build
+        working-directory: ./server
+        run: dotnet build --no-restore --configuration Release
+      
+      - name: Run tests
+        working-directory: ./server/ProjectManager.Tests
+        run: dotnet test --no-build --configuration Release --verbosity normal
+
+  test-frontend:
+    name: Test Frontend (React)
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: web/package-lock.json
+      
+      - name: Install dependencies
+        working-directory: ./web
+        run: npm ci
+      
+      - name: Run tests
+        working-directory: ./web
+        run: npm run test -- --run
+      
+      - name: Build
+        working-directory: ./web
+        run: npm run build
+        env:
+          VITE_API_BASE_URL: ${{ secrets.VITE_API_BASE_URL || 'http://localhost:5000' }}
+
+  deploy-backend:
+    name: Deploy Backend to Render
+    needs: [test-backend]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Trigger Render Deployment
+        if: secrets.RENDER_DEPLOY_HOOK_URL != ''
+        run: |
+          echo "Deploying backend to Render..."
+          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"
+          echo "Deploy triggered successfully!"
+
+  deploy-frontend:
+    name: Deploy Frontend to Vercel
+    needs: [test-frontend]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Deploy to Vercel
+        if: secrets.VERCEL_TOKEN != ''
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          working-directory: ./web
+          vercel-args: '--prod'
+
+  notify:
+    name: Deployment Notification
+    needs: [deploy-backend, deploy-frontend]
+    if: always() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Deployment Summary
+        run: |
+          echo "🚀 Deployment Summary"
+          echo "====================="
+          echo "Backend Status: ${{ needs.deploy-backend.result }}"
+          echo "Frontend Status: ${{ needs.deploy-frontend.result }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Author: ${{ github.actor }}"

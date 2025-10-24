@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: project-manager-api
+    env: docker
+    dockerfilePath: ./infra/Dockerfile.server
+    dockerContext: .
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ASPNETCORE_URLS
+        value: http://0.0.0.0:5000
+      - key: JWT__Key
+        generateValue: true
+        sync: false
+      - key: ConnectionStrings__Default
+        value: Data Source=/data/projectmanager.db
+    disk:
+      name: project-manager-data
+      mountPath: /data
+      sizeGB: 1
+    healthCheckPath: /healthz

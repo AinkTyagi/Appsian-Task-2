@@ -1,0 +1,31 @@
+{
+  "name": "mini-project-manager",
+  "version": "1.0.0",
+  "description": "Full-stack project management application with smart task scheduling",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:web\"",
+    "dev:server": "cd server && dotnet run",
+    "dev:web": "cd web && npm run dev",
+    "build": "npm run build:server && npm run build:web",
+    "build:server": "cd server && dotnet publish -c Release -o out",
+    "build:web": "cd web && npm run build",
+    "test": "npm run test:server && npm run test:web",
+    "test:server": "cd server/ProjectManager.Tests && dotnet test",
+    "test:web": "cd web && npm run test",
+    "install:all": "cd web && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": [
+    "project-management",
+    "dotnet",
+    "react",
+    "typescript",
+    "jwt",
+    "scheduler"
+  ],
+  "author": "",
+  "license": "MIT"
+}
