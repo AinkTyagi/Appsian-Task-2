@@ -11,7 +11,6 @@ services:
         value: http://0.0.0.0:5000
       - key: JWT__Key
         generateValue: true
-        sync: false
       - key: ConnectionStrings__Default
         value: Data Source=/data/projectmanager.db
     disk:
