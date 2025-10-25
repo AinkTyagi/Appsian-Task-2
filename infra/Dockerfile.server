@@ -17,5 +17,9 @@ RUN dotnet publish "ProjectManager.Api.csproj" -c Release -o /app/publish
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 WORKDIR /app
 EXPOSE 5000
+
+# Create data directory and set permissions
+RUN mkdir -p /data && chmod 755 /data
+
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "ProjectManager.Api.dll"]
