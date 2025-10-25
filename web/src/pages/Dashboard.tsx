@@ -66,64 +66,113 @@ export const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex justify-between items-center mb-8">
+    <div className="min-h-screen relative">
+      {/* Background decoration */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 right-10 w-72 h-72 bg-nexus-500/10 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute bottom-20 left-10 w-96 h-96 bg-accent-cyan/5 rounded-full blur-3xl animate-float" style={{ animationDelay: '3s' }}></div>
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">My Projects</h1>
-            <p className="mt-2 text-gray-600">Manage your projects and tasks</p>
+            <h1 className="text-4xl font-bold text-white mb-2">
+              Welcome to <span className="text-gradient">Nexus</span>
+            </h1>
+            <p className="text-white/70 text-lg">Manage your projects with style and efficiency</p>
           </div>
           <button
             onClick={() => setShowForm(!showForm)}
-            className="btn-primary"
+            className={showForm ? 'btn-glass' : 'btn-nexus'}
           >
-            {showForm ? 'Cancel' : '+ New Project'}
+            {showForm ? (
+              <>
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                Cancel
+              </>
+            ) : (
+              <>
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                New Project
+              </>
+            )}
           </button>
         </div>
 
         {showForm && (
-          <div className="card mb-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Create New Project</h2>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div className="card-glass mb-8 floating-card">
+            <div className="flex items-center mb-6">
+              <div className="w-10 h-10 bg-gradient-to-r from-nexus-500 to-nexus-600 rounded-xl flex items-center justify-center mr-3">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold text-white">Create New Project</h2>
+            </div>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
               <div>
-                <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="title" className="block text-sm font-semibold text-white/90 mb-2">
                   Project Title *
                 </label>
                 <input
                   {...register('title')}
                   type="text"
                   id="title"
-                  className="input-field"
-                  placeholder="Enter project title"
+                  className="input-nexus"
+                  placeholder="Enter an amazing project title"
                 />
                 {errors.title && (
-                  <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
+                  <p className="mt-2 text-sm text-red-400 flex items-center">
+                    <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    {errors.title.message}
+                  </p>
                 )}
               </div>
 
               <div>
-                <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="description" className="block text-sm font-semibold text-white/90 mb-2">
                   Description
                 </label>
                 <textarea
                   {...register('description')}
                   id="description"
                   rows={3}
-                  className="input-field"
-                  placeholder="Enter project description (optional)"
+                  className="input-nexus resize-none"
+                  placeholder="Describe your project vision (optional)"
                 />
                 {errors.description && (
-                  <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
+                  <p className="mt-2 text-sm text-red-400 flex items-center">
+                    <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    {errors.description.message}
+                  </p>
                 )}
               </div>
 
               <div className="flex justify-end">
                 <button
                   type="submit"
-                  className="btn-primary"
+                  className="btn-nexus"
                   disabled={createMutation.isPending}
                 >
-                  {createMutation.isPending ? 'Creating...' : 'Create Project'}
+                  {createMutation.isPending ? (
+                    <div className="flex items-center">
+                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Creating...
+                    </div>
+                  ) : (
+                    'Create Project'
+                  )}
                 </button>
               </div>
             </form>
@@ -131,22 +180,33 @@ export const Dashboard = () => {
         )}
 
         {projects && projects.length === 0 ? (
-          <div className="text-center py-12">
-            <svg
-              className="mx-auto h-12 w-12 text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+          <div className="card-glass text-center py-16">
+            <div className="w-20 h-20 bg-gradient-to-r from-nexus-500 to-nexus-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <svg
+                className="h-10 w-10 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                />
+              </svg>
+            </div>
+            <h3 className="text-2xl font-bold text-white mb-2">No projects yet</h3>
+            <p className="text-white/70 text-lg mb-6">Start your journey by creating your first project.</p>
+            <button
+              onClick={() => setShowForm(true)}
+              className="btn-nexus"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
-              />
-            </svg>
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No projects</h3>
-            <p className="mt-1 text-sm text-gray-500">Get started by creating a new project.</p>
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+              </svg>
+              Create Your First Project
+            </button>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

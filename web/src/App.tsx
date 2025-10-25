@@ -10,7 +10,7 @@ import { ProjectDetails } from './pages/ProjectDetails';
 function App() {
   return (
     <AuthProvider>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gradient-dark">
         <Navbar />
         <Routes>
           <Route path="/login" element={<Login />} />
