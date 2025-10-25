@@ -1,5 +1,7 @@
 # Mini Project Manager
 
+🚀 **[Live Demo](https://appsian-project-manager-phi.vercel.app/register)** - Try it now!
+
 A production-ready full-stack project management application with smart task scheduling capabilities.
 
 ## 🏗️ Architecture
